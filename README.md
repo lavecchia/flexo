@@ -3,11 +3,11 @@ FLEXO: Conformational search algorithm
 ##OS support
 LINUX
 
-Requirement:
+##Requirement:
 - Pymol
 - Pybel
 - OpenBabel
-- OpenMOPAC (optinional, only required for semiempical calculations)
+- OpenMOPAC (optional, only required for semiempical calculations)
 
 ## Installation
 Copy the code 
