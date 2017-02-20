@@ -1,44 +1,45 @@
-import numpy as np
-import sys, os, time
-from commonparameters import *
-import copy
-from connect_to_mopac import *
-from connect_to_openbabel import *
-from pymol import cmd
-import pymol
-import commonfunctions 
-#from guppy import hpy 
-
-
 # ===============================================================================================
 # MAIN FUNCTIONS
 # ===============================================================================================
    
+
+from commonparameters import *
+from connect_to_mopac import *
+from connect_to_openbabel import *
+import commonfunctions 
+
+import numpy as np
+import os
+import time
+import copy
+from pymol import cmd
+import pymol
+
+#uncomment to debug
+#from guppy import hpy 
+
 def calc_energy(forcefield,conformerlst,keywords,opt=False):
     tocalclst = []
     calculatedlst = []
     
-    #hp = hpy()
-    #before = hp.heap()
-    #~ print "antes"
-    #~ print before
     for conformer in conformerlst:
-        #check energy of conformer 
+        #check energy of conformer. If opt option is True, always optimize
         if conformer.energy==None or opt==True:
             tocalclst.append(conformer)
         else:
             calculatedlst.append(conformer)
     if forcefield=="mopac":
         conformerlst = calculatedlst + mopac_runjobs(tocalclst,keywords,opt)
-        #~ after = hp.heap()
-        #~ print after #- before
+        #uncomment to debug
+        #~ memory = hp.heap()
+        #~ print memory
         return conformerlst
         
     elif forcefield=="mm":
         conformerlst = calculatedlst + conformer_to_mmenergy(tocalclst, keywords)
-        #after = hp.heap()
-        #~ print after - before
-        #print after
+        #uncomment to debug
+        #~ memory = hp.heap()
+        #~ print memory
         return conformerlst
         
     else:
@@ -109,27 +110,7 @@ def fit_lineal(x,y):
     slope, intercept, r_value, p_value, slope_std_error = stats.linregress(x, y)
     return slope, intercept, r_value*r_value
     
-# control MC temperature
-def temperature_control(temp,mcmarklist,lastmark):
-    limitstore = 20
-    numberstoremark = float(len(mcmarklist))
-    mcmarklist.append(lastmark)
-    
-    if numberstoremark<limitstore:
-        return temp, mcmarklist
-    else:    
-        mcmarklist.pop(0)
-        numberdesc = mcmarklist.count(' @DESC\n')
-        numberprob = mcmarklist.count(' @PROB\n')
-        print "%s %f"%("prob",(float(numberprob + numberdesc)/numberstoremark))
-        if numberprob/numberstoremark > 0.4:
-            return temp * 0.95, mcmarklist
-        elif (numberprob + numberdesc)/numberstoremark < 0.2:
-            return temp * 1.05, mcmarklist
-        else:
-            return temp, mcmarklist
-    
-        
+            
 def identify_rotatable(moleculefilename,mask=None):
     os.system("perl %s %s  >/dev/null 2>&1"%(FINDROTATABLEPATH, moleculefilename))
     rotdatafile = open(moleculefilename.replace(".mol2",".aux"),"r")
@@ -177,9 +158,9 @@ def identify_rotatable2(molecule,mask=None):
         except:
             pass
     #check and eliminate methyl groups
-    print rotatablelst
     rotatablelst = [item for item in rotatablelst if (check_ismethyl(molecule,item[0])==False and check_ismethyl(molecule,item[1])==False)]    
-    print rotatablelst
+    for rotatable in rotatablelst:
+        print "Rotatable bond: /t%i-/t%i"%(rotatable[0],rotatable[1])
     return rotatablelst 
       
 def check_ismethyl(molecule, atomid):

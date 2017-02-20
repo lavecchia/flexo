@@ -1,38 +1,34 @@
+#!/usr/bin/python
 # FLEXO Conformational search
 # INPUT: 
 # mol2 structure
 
+#uncomment to debug
 #import guppy
 #h=guppy.hpy()
 #print h.heap()
 
-
 import __main__
 __main__.pymol_argv = [ 'pymol', '-qc'] # Quiet and no GUI
 
-from commonfunctions import * # common function
+from commonfunctions import * # common functions
 from commonparameters import * # common parameters
+from mainfunctions import * # main functions
+import ga_interface 
+
 import numpy as np
-import scipy.optimize
-import subprocess
-from itertools import count
 import ConfigParser # import setting file
 from optparse import OptionParser
-import sys, os, time
-from subprocess import Popen, list2cmdline
-import glob
+import os
 import time #check time of calculation
 import datetime
-import shutil
-import math
-import ga_interface
-from mainfunctions import *
 
 pymol.finish_launching()
 
 ###########
 # PARSE
 ###########
+
 parser = OptionParser()
 parser.add_option("-o", "--outfile", dest="outfilename", default=DEFREPORFILE,
                   help="name of file to write REPORT", metavar="REPORT")
@@ -44,13 +40,16 @@ parser.add_option("-i", "--infile", dest="infile",
 (options, args) = parser.parse_args()
 
 outfilename = options.outfilename
-infilename = options.infile
 
+if options.infile:
+    infilename = options.infile
+else:
+    print "A mol2 molecular structure file must be defined as input: flexo.py -i input.mol2"
+    exit()
 
 cfg = ConfigParser.ConfigParser() 
 if not cfg.read([options.configfile]):  
-    print "Running without settings file"  
-
+    print "Warning: Running without settings file and default options"  
 
 ###########
 # VARS
@@ -83,7 +82,6 @@ if cfg.has_option("method", "extrakeys"):
 else:  
     extrakeys = "PM6 PRECISE 1SCF GEO-OK CHARGE=0"
 varlist.append("extrakeys")
-
 
 
 #system
@@ -169,7 +167,6 @@ else:
 start_time = time.time()
 
 #initialize report file
-#~ outfile = open(outfilename, "w",0)
 outfile = open(outfilename, "w")
 
 #head of report file
@@ -188,22 +185,6 @@ if calculationtype == 'ga':
     print "Genetic Algorithm start"
     conformerlst = [] #list that store members or individues
     
-    #building parents
-    #~ while len(conformerlst)<numbermembers:
-        #~ # generate new values of parameters with a distribution probability from current values
-        #~ paramtestlst = generate_values(molecule.initialparamlst)
-        #~ 
-        #~ 
-        #~ if check_clashes(newconformer) == False:
-            #~ conformerlst.append(molecule.params_to_conformer(paramtestlst))
-        #~ else:
-            #~ print "A clash was detected"
-            #~ del newconformer
-            #~ del paramtestlst
-   
-
-    #~ conformerlst = calc_energy(forcefield, conformerlst, extrakeys)
-
     #generations
     nclash=0 
     for ncycle in range(1,maxgen+1):
@@ -215,12 +196,9 @@ if calculationtype == 'ga':
             newparamlst = generate_values(molecule.initialparamlst)
             newconformer = molecule.params_to_conformer(newparamlst)
             
-            #~ del newparamlst #memory problem
-            
             if check_clashes(newconformer) == False:
                 conformerlst.append(newconformer)
             else:
-                #~ print "A clash was detected"
                 del newconformer
                 del newparamlst
                 nclash+=1
