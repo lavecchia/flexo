@@ -36,7 +36,9 @@ parser.add_option("-c", "--config", dest="configfile", default=CONFIG_FILENAME,
                   help="FILE to setting the program", metavar="CONFIG")
 parser.add_option("-i", "--infile", dest="infile", 
                   help="Molecular structure in .mol2", metavar="INFILE")
-
+parser.add_option("--charge", dest="charge", default=0,
+                  help="Net charge of molecule or system", metavar="CHARGE")
+                  
 (options, args) = parser.parse_args()
 
 outfilename = options.outfilename
@@ -80,9 +82,11 @@ varlist.append("forcefield")
 if cfg.has_option("method", "extrakeys"):  
     extrakeys =cfg.get("method", "extrakeys").upper()
 else:  
-    extrakeys = "PM6 PRECISE 1SCF GEO-OK CHARGE=0"
+    extrakeys = "PM6 PRECISE 1SCF GEO-OK CHARGE="
 varlist.append("extrakeys")
 
+if "CHARGE" in extrakeys:
+    extrakeys = extrakeys.replace("CHARGE=","CHARGE="+str(options.charge))
 
 #system
 if cfg.has_option("system", "parameterfile"):

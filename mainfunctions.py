@@ -160,7 +160,7 @@ def identify_rotatable2(molecule,mask=None):
     #check and eliminate methyl groups
     rotatablelst = [item for item in rotatablelst if (check_ismethyl(molecule,item[0])==False and check_ismethyl(molecule,item[1])==False)]    
     for rotatable in rotatablelst:
-        print "Rotatable bond: /t%i-/t%i"%(rotatable[0],rotatable[1])
+        print "Rotatable bond: \t%i-\t%i"%(rotatable[0],rotatable[1])
     return rotatablelst 
       
 def check_ismethyl(molecule, atomid):
