@@ -47,6 +47,7 @@ if options.infile:
     infilename = options.infile
 else:
     print "A mol2 molecular structure file must be defined as input: flexo.py -i input.mol2"
+    
     exit()
 
 cfg = ConfigParser.ConfigParser() 
@@ -106,13 +107,13 @@ varlist.append("calculationtype")
 if cfg.has_option("system", "numbermembers"):
     numbermembers = int(cfg.get("system", "numbermembers"))
 else:
-    numbermembers = 10
+    numbermembers = 200
 varlist.append("numbermembers")
     
 if cfg.has_option("system", "maxgen"):
     maxgen = int(cfg.get("system", "maxgen"))
 else:
-    maxgen = 10
+    maxgen = 15
 varlist.append("maxgen")
 
 if cfg.has_option("system", "bestconfnum"):
@@ -122,7 +123,8 @@ if cfg.has_option("system", "bestconfnum"):
         bestconfnum = cfg.get("system", "bestconfnum")
     
 else:
-    bestconfnum = BESTCONFNUM
+    #~ bestconfnum = BESTCONFNUM
+    bestconfnum = 20
 varlist.append("bestconfnum")
 
 
@@ -162,6 +164,14 @@ for dihedral in dihedrallst:
 molecule.initialparamlst=paramlst
 if len(paramlst) == 0:
     print "There is not parameters to modify"
+    #~ bestconformerlst = [molecule.initialconformer]
+    #~ bestconformeroptlst = calc_energy(forcefield,bestconformerlst,extrakeys,opt=True)
+    #~ bestconformersopt = bestConformerList(bestconfnum)
+    #~ bestconformeroptlst = bestconformersopt.update_list(bestconformeroptlst)
+    #~ #first remove xyz output files because bestconformer number change every cycle     
+    #~ os.system("rm %s_out*.xyz >/dev/null 2>&1"%(molecule.filename.replace(".mol2","")), )
+    #~ for i in range(0,len(bestconformeroptlst)):
+        #~ conformer_to_xyz(bestconformeroptlst[i], molecule.filename.replace(".mol2","_opt_out%i.xyz"%(i)))
     exit()
 else:
     print "Parameters to modify: %i"%(len(paramlst))

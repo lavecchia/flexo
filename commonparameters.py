@@ -19,5 +19,5 @@ PERIODICTABLE = {'H' :1, 'He' :2, 'Li' :3, 'Be' :4, 'B' :5, 'C' :6, 'N' :7, 'O' 
 TMPDIR = "tmp/"
 BESTCONFNUM = 10 #"automatic" #number of best conformer stored
 ENERGYTHRESHOLD = 1.0 #difference in kcal/mol to calculate 
-RMSDTHRESHOLD = 0.3
+RMSDTHRESHOLD = 0.5
 
