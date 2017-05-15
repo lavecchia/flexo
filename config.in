@@ -1,0 +1,12 @@
+[limits]
+
+[method]
+#Ghemical
+extrakeys = GAFF
+forcefield = mm
+
+[system]
+#type of calculation: mc = Monte Carlo, ga = Genetic Algorithm (not yet implemented)
+calculationtype = ga
+bestconfnum = 10
+
